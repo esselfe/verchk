@@ -1,26 +1,33 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.0"
+VERCHK_VERSION="0.0.1.1"
+MODULE="$1"
 GNU_URL=http://gnu.mirror.iweb.com/
 
-case $1 in
+case "$MODULE" in
 autoconf)
-	wget -q $GNU_URL/autoconf -O /tmp/verchk-autoconf.html &&
-	grep -o 'href="autoconf-[0-9]*.*xz"' /tmp/verchk-autoconf.html |
+	wget -q $GNU_URL/$MODULE -O /tmp/verchk-$MODULE.html &&
+	grep -o 'href="'$MODULE'-[0-9]*.*xz"' /tmp/verchk-$MODULE.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
-	rm /tmp/verchk-autoconf.html
+	rm /tmp/verchk-$MODULE.html
 	;;
 automake)
-	wget -q $GNU_URL/automake -O /tmp/verchk-automake.html &&
-	grep -o 'href="automake-[0-9]*.*xz"' /tmp/verchk-automake.html |
+	wget -q $GNU_URL/$MODULE -O /tmp/verchk-$MODULE.html &&
+	grep -o 'href="'$MODULE'-[0-9]*.*xz"' /tmp/verchk-$MODULE.html |
 		sed 's/href=//g;s/"//g' |sort -V |tail -n1
-	rm /tmp/verchk-automake.html
+	rm /tmp/verchk-$MODULE.html
 	;;
 bc)
-	wget -q $GNU_URL/bc -O /tmp/verchk-bc.html &&
-	grep -o 'href="bc-[0-9]*.*gz"' /tmp/verchk-bc.html |
+	wget -q $GNU_URL/$MODULE -O /tmp/verchk-$MODULE.html &&
+	grep -o 'href="'$MODULE'-[0-9]*.*gz"' /tmp/verchk-$MODULE.html |
 		sed 's/href=//g;s/"//g' |sort -V |tail -n1
-	rm /tmp/verchk-bc.html
+	rm /tmp/verchk-$MODULE.html
+	;;
+bison)
+	wget -q $GNU_URL/$MODULE -O /tmp/verchk-$MODULE.html &&
+	grep -o 'href="'$MODULE'-[0-9]*.*xz"' /tmp/verchk-$MODULE.html |
+		sed 's/href=//g;s/"//g' |sort -V |tail -n1
+	rm /tmp/verchk-$MODULE.html
 	;;
 -V|--version)
 	echo "verchk.sh $VERCHK_VERSION" && exit 0
