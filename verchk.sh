@@ -16,6 +16,12 @@ automake)
 		sed 's/href=//g;s/"//g' |sort -V |tail -n1
 	rm /tmp/verchk-automake.html
 	;;
+bc)
+	wget -q $GNU_URL/bc -O /tmp/verchk-bc.html &&
+	grep -o 'href="bc-[0-9]*.*gz"' /tmp/verchk-bc.html |
+		sed 's/href=//g;s/"//g' |sort -V |tail -n1
+	rm /tmp/verchk-bc.html
+	;;
 -V|--version)
 	echo "verchk.sh $VERCHK_VERSION" && exit 0
 	;;
