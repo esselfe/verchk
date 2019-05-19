@@ -1,11 +1,12 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.7"
+VERCHK_VERSION="0.0.1.8"
 MODULE="$1"
 GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
 XORG_DATA_URL="https://www.x.org/releases/individual/data/"
 XORG_DOC_URL="https://www.x.org/releases/individual/doc/"
+XORG_DRIVER_URL="https://www.x.org/releases/individual/driver/"
 XORG_FONT_URL="https://www.x.org/releases/individual/font/"
 XORG_UTIL_URL="https://www.x.org/releases/individual/util/"
 
@@ -13,11 +14,7 @@ if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
 	echo "Usage: verchk { MODULENAME | clean | help }"
 	exit 0
 elif [ "$1" = "clean" ]; then
-	rm -v /tmp/verchk-xorg-app.html
-	rm -v /tmp/verchk-xorg-data.html
-	rm -v /tmp/verchk-xorg-doc.html
-	rm -v /tmp/verchk-xorg-font.html
-	rm -v /tmp/verchk-xorg-util.html
+	rm -v /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
 fi
 
 vc_gnu() {
@@ -39,6 +36,11 @@ vc_xorg_data() {
 vc_xorg_doc() {
 	[ -f /tmp/verchk-xorg-doc.html ] || wget -q $XORG_DOC_URL -O /tmp/verchk-xorg-doc.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-doc.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+}
+vc_xorg_driver() {
+	[ -f /tmp/verchk-xorg-driver.html ] || wget -q $XORG_DRIVER_URL -O /tmp/verchk-xorg-driver.html &&
+	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-driver.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_font() {
@@ -108,6 +110,7 @@ gccmakedep) vc_xorg_util;;
 gdb) vc_gnu;;
 gdbm) vc_gnu;;
 gettext) vc_gnu;;
+glamor-egl) vc_xorg_driver;;
 gmp) vc_gnu;;
 grep) vc_gnu;;
 groff) vc_gnu;;
@@ -127,6 +130,103 @@ xauth) vc_xorg_app;;
 xbitmaps) vc_xorg_data;;
 xcursor-themes) vc_xorg_data;;
 xev) vc_xorg_app;;
+xf86-input-acecad) vc_xorg_driver;;
+xf86-input-aiptek) vc_xorg_driver;;
+xf86-input-calcomp) vc_xorg_driver;;
+xf86-input-citron) vc_xorg_driver;;
+xf86-input-digitaledge) vc_xorg_driver;;
+xf86-input-dmc) vc_xorg_driver;;
+xf86-input-dynapro) vc_xorg_driver;;
+xf86-input-elo2300) vc_xorg_driver;;
+xf86-input-elographics) vc_xorg_driver;;
+xf86-input-evdev) vc_xorg_driver;;
+xf86-input-fpit) vc_xorg_driver;;
+xf86-input-hyperpen) vc_xorg_driver;;
+xf86-input-jamstudio) vc_xorg_driver;;
+xf86-input-joystick) vc_xorg_driver;;
+xf86-input-keyboard) vc_xorg_driver;;
+xf86-input-libinput) vc_xorg_driver;;
+xf86-input-magellan) vc_xorg_driver;;
+xf86-input-magictouch) vc_xorg_driver;;
+xf86-input-microtouch) vc_xorg_driver;;
+xf86-input-mouse) vc_xorg_driver;;
+xf86-input-mutouch) vc_xorg_driver;;
+xf86-input-palmax) vc_xorg_driver;;
+xf86-input-penmount) vc_xorg_driver;;
+xf86-input-spaceorb) vc_xorg_driver;;
+xf86-input-summa) vc_xorg_driver;;
+xf86-input-synaptics) vc_xorg_driver;;
+xf86-input-tek4957) vc_xorg_driver;;
+xf86-input-ur98) vc_xorg_driver;;
+xf86-input-vmmouse) vc_xorg_driver;;
+xf86-input-void) vc_xorg_driver;;
+xf86-video-amd) vc_xorg_driver;;
+xf86-video-amdgpu) vc_xorg_driver;;
+xf86-video-amdgpu8) vc_xorg_driver;;
+xf86-video-amdgpu9) vc_xorg_driver;;
+xf86-video-apm) vc_xorg_driver;;
+xf86-video-ark) vc_xorg_driver;;
+xf86-video-ast) vc_xorg_driver;;
+xf86-video-ati) vc_xorg_driver;;
+xf86-video-ati8) vc_xorg_driver;;
+xf86-video-ati9) vc_xorg_driver;;
+xf86-video-chips) vc_xorg_driver;;
+xf86-video-cirrus) vc_xorg_driver;;
+xf86-video-cyrix) vc_xorg_driver;;
+xf86-video-dummy) vc_xorg_driver;;
+xf86-video-fbdev) vc_xorg_driver;;
+xf86-video-freedreno) vc_xorg_driver;;
+xf86-video-geode) vc_xorg_driver;;
+xf86-video-glide) vc_xorg_driver;;
+xf86-video-glint) vc_xorg_driver;;
+xf86-video-i128) vc_xorg_driver;;
+xf86-video-i740) vc_xorg_driver;;
+xf86-video-i810) vc_xorg_driver;;
+xf86-video-impact) vc_xorg_driver;;
+xf86-video-imstt) vc_xorg_driver;;
+xf86-video-intel) vc_xorg_driver;;
+xf86-video-mach64) vc_xorg_driver;;
+xf86-video-mga) vc_xorg_driver;;
+xf86-video-modesetting) vc_xorg_driver;;
+xf86-video-neomagic) vc_xorg_driver;;
+xf86-video-newport) vc_xorg_driver;;
+xf86-video-nouveau) vc_xorg_driver;;
+xf86-video-nsc) vc_xorg_driver;;
+xf86-video-nv) vc_xorg_driver;;
+xf86-video-omap) vc_xorg_driver;;
+xf86-video-openchrome) vc_xorg_driver;;
+xf86-video-qxl) vc_xorg_driver;;
+xf86-video-r128) vc_xorg_driver;;
+xf86-video-radeonhd) vc_xorg_driver;;
+xf86-video-rendition) vc_xorg_driver;;
+xf86-video-s3) vc_xorg_driver;;
+xf86-video-s3virge) vc_xorg_driver;;
+xf86-video-savage) vc_xorg_driver;;
+xf86-video-siliconmotion) vc_xorg_driver;;
+xf86-video-sis) vc_xorg_driver;;
+xf86-video-sisusb) vc_xorg_driver;;
+xf86-video-sunbw2) vc_xorg_driver;;
+xf86-video-suncg3) vc_xorg_driver;;
+xf86-video-suncg6) vc_xorg_driver;;
+xf86-video-suncg14) vc_xorg_driver;;
+xf86-video-sunffb) vc_xorg_driver;;
+xf86-video-sunleo) vc_xorg_driver;;
+xf86-video-suntcx) vc_xorg_driver;;
+xf86-video-tdfx) vc_xorg_driver;;
+xf86-video-tga) vc_xorg_driver;;
+xf86-video-trident) vc_xorg_driver;;
+xf86-video-tseng) vc_xorg_driver;;
+xf86-video-v4l) vc_xorg_driver;;
+xf86-video-vboxvideo) vc_xorg_driver;;
+xf86-video-vermilion) vc_xorg_driver;;
+xf86-video-vesa) vc_xorg_driver;;
+xf86-video-vga) vc_xorg_driver;;
+xf86-video-via) vc_xorg_driver;;
+xf86-video-vmware) vc_xorg_driver;;
+xf86-video-voodoo) vc_xorg_driver;;
+xf86-video-wsfb) vc_xorg_driver;;
+xf86-video-xgi) vc_xorg_driver;;
+xf86-video-xgixp) vc_xorg_driver;;
 xinit) vc_xorg_app;;
 xinput) vc_xorg_app;;
 xkbcomp) vc_xorg_app;;
