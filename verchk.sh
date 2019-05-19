@@ -1,10 +1,11 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.5"
+VERCHK_VERSION="0.0.1.6"
 MODULE="$1"
 GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
 XORG_DATA_URL="https://www.x.org/releases/individual/data/"
+XORG_DOC_URL="https://www.x.org/releases/individual/doc/"
 XORG_UTIL_URL="https://www.x.org/releases/individual/util/"
 
 vc_gnu() {
@@ -18,21 +19,24 @@ vc_xorg_app() {
 	[ -f /tmp/verchk-xorg-app.html ] || wget -q $XORG_APP_URL -O /tmp/verchk-xorg-app.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-app.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
-#	rm /tmp/verchk-xorg-app.html
 }
 vc_xorg_data() {
 	# Only fetch the file once, all modules are on that page ...let a reboot clear the file
 	[ -f /tmp/verchk-xorg-data.html ] || wget -q $XORG_DATA_URL -O /tmp/verchk-xorg-data.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-data.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
-#	rm /tmp/verchk-xorg-data.html
+}
+vc_xorg_doc() {
+	# Only fetch the file once, all modules are on that page ...let a reboot clear the file
+	[ -f /tmp/verchk-xorg-doc.html ] || wget -q $XORG_DOC_URL -O /tmp/verchk-xorg-doc.html &&
+	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-doc.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_util() {
 	# Only fetch the file once, all modules are on that page ...let a reboot clear the file
 	[ -f /tmp/verchk-xorg-util.html ] || wget -q $XORG_UTIL_URL -O /tmp/verchk-xorg-util.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-util.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
-#	rm /tmp/verchk-xorg-util.html
 }
 
 
@@ -92,10 +96,18 @@ xkeyboard-config)
 xmessage) vc_xorg_app;;
 xmodmap) vc_xorg_app;;
 xorg-cf-files) vc_xorg_util;;
+xorg-docs) vc_xorg_doc;;
+xorg-sgml-doctools) vc_xorg_doc;;
 xrandr) vc_xorg_app;;
 xrdb) vc_xorg_app;;
 xset) vc_xorg_app;;
 xsetroot) vc_xorg_app;;
+-c|--clean-tmp)
+	rm /tmp/verchk-xorg-app.html
+	rm /tmp/verchk-xorg-data.html
+	rm /tmp/verchk-xorg-doc.html
+	rm /tmp/verchk-xorg-util.html
+	;;
 -V|--version) echo "verchk.sh $VERCHK_VERSION" && exit 0;;
 *) echo "Usage: verchk.sh MODULE" && exit 22;;
 esac
