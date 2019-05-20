@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.9"
+VERCHK_VERSION="0.0.1.10"
 MODULE="$1"
 GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
@@ -9,9 +9,10 @@ XORG_DOC_URL="https://www.x.org/releases/individual/doc/"
 XORG_DRIVER_URL="https://www.x.org/releases/individual/driver/"
 XORG_FONT_URL="https://www.x.org/releases/individual/font/"
 XORG_UTIL_URL="https://www.x.org/releases/individual/util/"
+WGET_CMD="wget -q -4 -t 1 -T 24 --no-proxy --no-cache --no-cookies"
 
 if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
-	echo "Usage: verchk { MODULENAME | clean | help }"
+	echo "Usage: verchk { MODULENAME | all | clean | help }"
 	exit 0
 elif [ "$1" = "clean" ]; then
 	rm -v /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
@@ -25,38 +26,38 @@ if [[ "$1" = "all" ]]; then
 fi
 
 vc_gnu() {
-	wget -q $GNU_URL/$MODULE -O /tmp/verchk-gnu-$MODULE.html &&
+	$WGET_CMD $GNU_URL/$MODULE -O /tmp/verchk-gnu-$MODULE.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-$MODULE.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	rm /tmp/verchk-gnu-$MODULE.html
 }
 vc_xorg_app() {
-	[ -f /tmp/verchk-xorg-app.html ] || wget -q $XORG_APP_URL -O /tmp/verchk-xorg-app.html &&
+	[ -f /tmp/verchk-xorg-app.html ] || $WGET_CMD $XORG_APP_URL -O /tmp/verchk-xorg-app.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-app.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_data() {
-	[ -f /tmp/verchk-xorg-data.html ] || wget -q $XORG_DATA_URL -O /tmp/verchk-xorg-data.html &&
+	[ -f /tmp/verchk-xorg-data.html ] || $WGET_CMD $XORG_DATA_URL -O /tmp/verchk-xorg-data.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-data.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_doc() {
-	[ -f /tmp/verchk-xorg-doc.html ] || wget -q $XORG_DOC_URL -O /tmp/verchk-xorg-doc.html &&
+	[ -f /tmp/verchk-xorg-doc.html ] || $WGET_CMD $XORG_DOC_URL -O /tmp/verchk-xorg-doc.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-doc.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_driver() {
-	[ -f /tmp/verchk-xorg-driver.html ] || wget -q $XORG_DRIVER_URL -O /tmp/verchk-xorg-driver.html &&
+	[ -f /tmp/verchk-xorg-driver.html ] || $WGET_CMD $XORG_DRIVER_URL -O /tmp/verchk-xorg-driver.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-driver.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_font() {
-	[ -f /tmp/verchk-xorg-font.html ] || wget -q $XORG_FONT_URL -O /tmp/verchk-xorg-font.html &&
+	[ -f /tmp/verchk-xorg-font.html ] || $WGET_CMD $XORG_FONT_URL -O /tmp/verchk-xorg-font.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-font.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_util() {
-	[ -f /tmp/verchk-xorg-util.html ] || wget -q $XORG_UTIL_URL -O /tmp/verchk-xorg-util.html &&
+	[ -f /tmp/verchk-xorg-util.html ] || $WGET_CMD $XORG_UTIL_URL -O /tmp/verchk-xorg-util.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-util.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
@@ -235,7 +236,7 @@ xkbcomp) vc_xorg_app;;
 #xkbdata) vc_xorg_data;;
 xkill) vc_xorg_app;;
 xkeyboard-config)
-	wget -q https://www.x.org/releases/individual/data/xkeyboard-config/ \
+	$WGET_CMD https://www.x.org/releases/individual/data/xkeyboard-config/ \
 			-O /tmp/verchk-xorg-xkeyboard-config.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-xkeyboard-config.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
