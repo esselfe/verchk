@@ -1,7 +1,9 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.10"
+VERCHK_VERSION="0.0.1.11"
+[ -z "$VC_DEBUG" ] && VC_DEBUG=0
 MODULE="$1"
+#GNU_URL="http://ftpmirror.gnu.org/"
 GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
 XORG_DATA_URL="https://www.x.org/releases/individual/data/"
@@ -9,27 +11,34 @@ XORG_DOC_URL="https://www.x.org/releases/individual/doc/"
 XORG_DRIVER_URL="https://www.x.org/releases/individual/driver/"
 XORG_FONT_URL="https://www.x.org/releases/individual/font/"
 XORG_UTIL_URL="https://www.x.org/releases/individual/util/"
-WGET_CMD="wget -q -4 -t 1 -T 24 --no-proxy --no-cache --no-cookies"
+if [ -z "$VC_DEBUG" -o $VC_DEBUG -eq 0 ]; then
+	WGET_CMD="wget -q -4 -t 1 -T 24 --no-proxy --no-cache --no-cookies"
+else
+	WGET_CMD="wget -v -4 -t 1 -T 24 --no-proxy --no-cache --no-cookies"
+fi
 
 if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
-	echo "Usage: verchk { MODULENAME | all | clean | help }"
+	echo "Usage: verchk.sh { MODULENAME | all | clean | help }"
 	exit 0
 elif [ "$1" = "clean" ]; then
 	rm -v /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
+	rm -v /tmp/verchk-gnu-*.html
 fi
 
 if [[ "$1" = "all" ]]; then
 	for m in `grep -o '^[a-z]*.*) ' $0 |sed '/^#/d;s/)//g;/^vc_/d;/grep -o/d'`; do
 		echo "`lvu installed $m` `lvu version $m` `$0 $m`"
 	done
+	[ "$VC_DEBUG" -eq "0" ]	&& $0 clean
 	exit 0
 fi
 
 vc_gnu() {
-	$WGET_CMD $GNU_URL/$MODULE -O /tmp/verchk-gnu-$MODULE.html &&
+	[ -f "/tmp/verchk-gnu-$MODULE.html" ] || 
+		$WGET_CMD $GNU_URL/$MODULE -O /tmp/verchk-gnu-$MODULE.html &&
 	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-$MODULE.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
-	rm /tmp/verchk-gnu-$MODULE.html
+	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-$MODULE.html
 }
 vc_xorg_app() {
 	[ -f /tmp/verchk-xorg-app.html ] || $WGET_CMD $XORG_APP_URL -O /tmp/verchk-xorg-app.html &&
@@ -63,22 +72,34 @@ vc_xorg_util() {
 }
 
 case "$MODULE" in
+a2ps) vc_gnu;;
+acct) vc_gnu;;
 appres) vc_xorg_app;;
+aspell) vc_gnu;;
 autoconf) vc_gnu;;
+autoconf-archive) vc_gnu;;
+autogen) vc_gnu;;
 automake) vc_gnu;;
+bash) vc_gnu;;
 bc) vc_gnu;;
 bdftopcf) vc_xorg_app;;
+binutils) vc_gnu;;
 bison) vc_gnu;;
 bitmap) vc_xorg_app;;
+clisp) vc_gnu;;
 coreutils) vc_gnu;;
 cpio) vc_gnu;;
 ddrescue) vc_gnu;;
+ddd) vc_gnu;;
 diffutils) vc_gnu;;
 ed) vc_gnu;;
 editres) vc_xorg_app;;
+emacs) vc_gnu;;
 encodings) vc_xorg_font;;
+enscript) vc_gnu;;
 #fdisk) vc_gnu;;
 findutils) vc_gnu;;
+flex) vc_gnu;;
 #font-adobe-dpi) vc_xorg_font;;
 #font-adobe-utopia-dpi) vc_xorg_font;;
 #font-adobe-utopia-type) vc_xorg_font;;
@@ -113,28 +134,96 @@ font-winitzki-cyrillic) vc_xorg_font;;
 #font-xfree-type) vc_xorg_font;;
 #fontutils) vc_gnu;;
 gawk) vc_gnu;;
+gcal) vc_gnu;;
+gcc)
+	[ -f "/tmp/verchk-gnu-gcc.html" ] || $WGET_CMD $GNU_URL/$MODULE -O /tmp/verchk-gnu-gcc.html &&
+	grep -Eo 'href="gcc-[[:digit:]]*.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-gcc.html |
+		sed '/latest/d;s/href=//g;s/"//g;/^gcc-vms/d' |sort -V |tail -n1
+	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-gcc.html
+	;;
 gccmakedep) vc_xorg_util;;
+gcl) vc_gnu;;
 gdb) vc_gnu;;
 gdbm) vc_gnu;;
+gengetopt) vc_gnu;;
 gettext) vc_gnu;;
+gforth) vc_gnu;;
+ghostscript) # vc_gnu;;
+	[ -f "/tmp/verchk-gnu-ghostscript.html" ] || 
+		$WGET_CMD $GNU_URL/ghostscript -O /tmp/verchk-gnu-ghostscript.html &&
+	grep -Eo 'href="ghostscript-[0-9]*\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-ghostscript.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-ghostscript.html
+	;;
+#git) vc_gnu;;
 #glamor-egl) vc_xorg_driver;;
+glibc) vc_gnu;;
 gmp) vc_gnu;;
+gnutls) vc_gnu;;
+gperf) vc_gnu;;
 grep) vc_gnu;;
 groff) vc_gnu;;
+grub) vc_gnu;;
+gsl) vc_gnu;;
+guile) # vc_gnu;;
+	[ -f "/tmp/verchk-gnu-guile.html" ] || 
+		$WGET_CMD $GNU_URL/guile -O /tmp/verchk-gnu-guile.html &&
+	grep -Eo 'href="guile-[[:digit:]]*\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-guile.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-guile.html
+	;;
+gzip) vc_gnu;;
 iceauth) vc_xorg_app;;
 ico) vc_xorg_app;;
+idutils) vc_gnu;;
 imake) vc_xorg_util;;
+indent) vc_gnu;;
+inetutils) vc_gnu;;
+less) vc_gnu;;
+libcdio) vc_gnu;;
+libidn) vc_gnu;;
+libmicrohttpd) vc_gnu;;
+libsigsegv) vc_gnu;;
+libtasn1) vc_gnu;;
+libtool) vc_gnu;;
+libunistring) vc_gnu;;
+libxmi) vc_gnu;;
+m4) vc_gnu;;
+mailman) vc_gnu;;
+mailutils) vc_gnu;;
+make) vc_gnu;;
 makedepend) vc_xorg_util;;
+mc) vc_gnu;;
 mkfontdir) vc_xorg_app;;
 mkfontscale) vc_xorg_app;;
+mpc) vc_gnu;;
+mpfr) vc_gnu;;
+mtools) vc_gnu;;
+nano) vc_gnu;;
+nettle) vc_gnu;;
+parted) vc_gnu;;
+patch) vc_gnu;;
+plotutils) vc_gnu;;
+pth) vc_gnu;;
+readline) vc_gnu;;
 rgb) vc_xorg_app;;
+screen) vc_gnu;;
+sed) vc_gnu;;
 setxkbmap) vc_xorg_app;;
 showfont) vc_xorg_app;;
+tar) vc_gnu;;
+texinfo) vc_gnu;;
+time) vc_gnu;;
 twm) vc_xorg_app;;
+unifont) vc_gnu;;
+units) vc_gnu;;
 util-macros) vc_xorg_util;;
 #viewres) vc_xorg_app;;
+wget) vc_gnu;;
+which) vc_gnu;;
 xauth) vc_xorg_app;;
 xbitmaps) vc_xorg_data;;
+xboard) vc_gnu;;
 xcursor-themes) vc_xorg_data;;
 xev) vc_xorg_app;;
 xf86-input-acecad) vc_xorg_driver;;
@@ -238,9 +327,9 @@ xkill) vc_xorg_app;;
 xkeyboard-config)
 	$WGET_CMD https://www.x.org/releases/individual/data/xkeyboard-config/ \
 			-O /tmp/verchk-xorg-xkeyboard-config.html &&
-	grep -Eo 'href="'$MODULE'-[0-9]*.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-xkeyboard-config.html |
+	grep -Eo 'href="xkeyboard-config-[0-9]*\..*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-xkeyboard-config.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
-	rm /tmp/verchk-xorg-xkeyboard-config.html
+	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-xorg-xkeyboard-config.html
 	;;
 xmessage) vc_xorg_app;;
 xmodmap) vc_xorg_app;;
@@ -251,4 +340,5 @@ xrandr) vc_xorg_app;;
 xrdb) vc_xorg_app;;
 xset) vc_xorg_app;;
 xsetroot) vc_xorg_app;;
+zile) vc_gnu;;
 esac
