@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.8"
+VERCHK_VERSION="0.0.1.9"
 MODULE="$1"
 GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
@@ -15,6 +15,13 @@ if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
 	exit 0
 elif [ "$1" = "clean" ]; then
 	rm -v /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
+fi
+
+if [[ "$1" = "all" ]]; then
+	for m in `grep -o '^[a-z]*.*) ' $0 |sed '/^#/d;s/)//g;/^vc_/d;/grep -o/d'`; do
+		echo "`lvu installed $m` `lvu version $m` `$0 $m`"
+	done
+	exit 0
 fi
 
 vc_gnu() {
@@ -54,7 +61,6 @@ vc_xorg_util() {
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 
-
 case "$MODULE" in
 appres) vc_xorg_app;;
 autoconf) vc_gnu;;
@@ -70,25 +76,25 @@ diffutils) vc_gnu;;
 ed) vc_gnu;;
 editres) vc_xorg_app;;
 encodings) vc_xorg_font;;
-fdisk) vc_gnu;;
+#fdisk) vc_gnu;;
 findutils) vc_gnu;;
-font-adobe-dpi) vc_xorg_font;;
-font-adobe-utopia-dpi) vc_xorg_font;;
-font-adobe-utopia-type) vc_xorg_font;;
+#font-adobe-dpi) vc_xorg_font;;
+#font-adobe-utopia-dpi) vc_xorg_font;;
+#font-adobe-utopia-type) vc_xorg_font;;
 font-alias) vc_xorg_font;;
 font-arabic-misc) vc_xorg_font;;
-font-bh-dpi) vc_xorg_font;;
-font-bh-lucidatypewriter-dpi) vc_xorg_font;;
+#font-bh-dpi) vc_xorg_font;;
+#font-bh-lucidatypewriter-dpi) vc_xorg_font;;
 font-bh-ttf) vc_xorg_font;;
-font-bh-type) vc_xorg_font;;
-font-bitstream-dpi) vc_xorg_font;;
+#font-bh-type) vc_xorg_font;;
+#font-bitstream-dpi) vc_xorg_font;;
 font-bitstream-speedo) vc_xorg_font;;
-font-bitstream-type) vc_xorg_font;;
+#font-bitstream-type) vc_xorg_font;;
 font-cronyx-cyrillic) vc_xorg_font;;
 font-cursor-misc) vc_xorg_font;;
 font-daewoo-misc) vc_xorg_font;;
 font-dec-misc) vc_xorg_font;;
-font-ibm-type) vc_xorg_font;;
+#font-ibm-type) vc_xorg_font;;
 font-isas-misc) vc_xorg_font;;
 font-jis-misc) vc_xorg_font;;
 font-micro-misc) vc_xorg_font;;
@@ -103,14 +109,14 @@ font-sony-misc) vc_xorg_font;;
 font-sun-misc) vc_xorg_font;;
 font-util) vc_xorg_font;;
 font-winitzki-cyrillic) vc_xorg_font;;
-font-xfree-type) vc_xorg_font;;
-fontutils) vc_gnu;;
+#font-xfree-type) vc_xorg_font;;
+#fontutils) vc_gnu;;
 gawk) vc_gnu;;
 gccmakedep) vc_xorg_util;;
 gdb) vc_gnu;;
 gdbm) vc_gnu;;
 gettext) vc_gnu;;
-glamor-egl) vc_xorg_driver;;
+#glamor-egl) vc_xorg_driver;;
 gmp) vc_gnu;;
 grep) vc_gnu;;
 groff) vc_gnu;;
@@ -125,7 +131,7 @@ setxkbmap) vc_xorg_app;;
 showfont) vc_xorg_app;;
 twm) vc_xorg_app;;
 util-macros) vc_xorg_util;;
-viewres) vc_xorg_app;;
+#viewres) vc_xorg_app;;
 xauth) vc_xorg_app;;
 xbitmaps) vc_xorg_data;;
 xcursor-themes) vc_xorg_data;;
@@ -160,30 +166,26 @@ xf86-input-tek4957) vc_xorg_driver;;
 xf86-input-ur98) vc_xorg_driver;;
 xf86-input-vmmouse) vc_xorg_driver;;
 xf86-input-void) vc_xorg_driver;;
-xf86-video-amd) vc_xorg_driver;;
+#xf86-video-amd) vc_xorg_driver;;
 xf86-video-amdgpu) vc_xorg_driver;;
-xf86-video-amdgpu8) vc_xorg_driver;;
-xf86-video-amdgpu9) vc_xorg_driver;;
 xf86-video-apm) vc_xorg_driver;;
 xf86-video-ark) vc_xorg_driver;;
 xf86-video-ast) vc_xorg_driver;;
 xf86-video-ati) vc_xorg_driver;;
-xf86-video-ati8) vc_xorg_driver;;
-xf86-video-ati9) vc_xorg_driver;;
 xf86-video-chips) vc_xorg_driver;;
 xf86-video-cirrus) vc_xorg_driver;;
 xf86-video-cyrix) vc_xorg_driver;;
 xf86-video-dummy) vc_xorg_driver;;
 xf86-video-fbdev) vc_xorg_driver;;
 xf86-video-freedreno) vc_xorg_driver;;
-xf86-video-geode) vc_xorg_driver;;
-xf86-video-glide) vc_xorg_driver;;
+#xf86-video-geode) vc_xorg_driver;;
+#xf86-video-glide) vc_xorg_driver;;
 xf86-video-glint) vc_xorg_driver;;
 xf86-video-i128) vc_xorg_driver;;
 xf86-video-i740) vc_xorg_driver;;
-xf86-video-i810) vc_xorg_driver;;
-xf86-video-impact) vc_xorg_driver;;
-xf86-video-imstt) vc_xorg_driver;;
+#xf86-video-i810) vc_xorg_driver;;
+#xf86-video-impact) vc_xorg_driver;;
+#xf86-video-imstt) vc_xorg_driver;;
 xf86-video-intel) vc_xorg_driver;;
 xf86-video-mach64) vc_xorg_driver;;
 xf86-video-mga) vc_xorg_driver;;
@@ -205,32 +207,32 @@ xf86-video-savage) vc_xorg_driver;;
 xf86-video-siliconmotion) vc_xorg_driver;;
 xf86-video-sis) vc_xorg_driver;;
 xf86-video-sisusb) vc_xorg_driver;;
-xf86-video-sunbw2) vc_xorg_driver;;
-xf86-video-suncg3) vc_xorg_driver;;
-xf86-video-suncg6) vc_xorg_driver;;
-xf86-video-suncg14) vc_xorg_driver;;
-xf86-video-sunffb) vc_xorg_driver;;
-xf86-video-sunleo) vc_xorg_driver;;
-xf86-video-suntcx) vc_xorg_driver;;
+#xf86-video-sunbw2) vc_xorg_driver;;
+#xf86-video-suncg3) vc_xorg_driver;;
+#xf86-video-suncg6) vc_xorg_driver;;
+#xf86-video-suncg14) vc_xorg_driver;;
+#xf86-video-sunffb) vc_xorg_driver;;
+#xf86-video-sunleo) vc_xorg_driver;;
+#xf86-video-suntcx) vc_xorg_driver;;
 xf86-video-tdfx) vc_xorg_driver;;
-xf86-video-tga) vc_xorg_driver;;
+#xf86-video-tga) vc_xorg_driver;;
 xf86-video-trident) vc_xorg_driver;;
-xf86-video-tseng) vc_xorg_driver;;
+#xf86-video-tseng) vc_xorg_driver;;
 xf86-video-v4l) vc_xorg_driver;;
 xf86-video-vboxvideo) vc_xorg_driver;;
-xf86-video-vermilion) vc_xorg_driver;;
+#xf86-video-vermilion) vc_xorg_driver;;
 xf86-video-vesa) vc_xorg_driver;;
-xf86-video-vga) vc_xorg_driver;;
-xf86-video-via) vc_xorg_driver;;
+#xf86-video-vga) vc_xorg_driver;;
+#xf86-video-via) vc_xorg_driver;;
 xf86-video-vmware) vc_xorg_driver;;
 xf86-video-voodoo) vc_xorg_driver;;
-xf86-video-wsfb) vc_xorg_driver;;
-xf86-video-xgi) vc_xorg_driver;;
-xf86-video-xgixp) vc_xorg_driver;;
+#xf86-video-wsfb) vc_xorg_driver;;
+#xf86-video-xgi) vc_xorg_driver;;
+#xf86-video-xgixp) vc_xorg_driver;;
 xinit) vc_xorg_app;;
 xinput) vc_xorg_app;;
 xkbcomp) vc_xorg_app;;
-xkbdata) vc_xorg_data;;
+#xkbdata) vc_xorg_data;;
 xkill) vc_xorg_app;;
 xkeyboard-config)
 	wget -q https://www.x.org/releases/individual/data/xkeyboard-config/ \
