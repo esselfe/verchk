@@ -1,8 +1,8 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.13"
+VERCHK_VERSION="0.0.1.14"
 [ -z "$VC_DEBUG" ] && VC_DEBUG=0
-MODULE="$1"
+[ -z "$1" ] || MODULE="$1"
 GNU_URL="http://ftpmirror.gnu.org/"
 #GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
@@ -18,9 +18,9 @@ else
 	WGET_CMD="wget -v -t 1 -T 24 --no-proxy --no-cache --no-cookies"
 fi
 
-if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
-	echo "Usage: verchk.sh { MODULENAME | all | clean | help }"
-	exit 0
+if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
+	echo "Usage: verchk.sh { help | all | clean | MODULENAME }"
+	exit 1
 elif [ "$1" = "clean" ]; then
 	rm -v /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
 	rm -v /tmp/verchk-gnu-*.html
@@ -80,7 +80,7 @@ case "$MODULE" in
 gcc)
 	[ -f "/tmp/verchk-gnu-gcc.html" ] || $WGET_CMD $GNU_URL/$MODULE -O /tmp/verchk-gnu-gcc.html &&
 	grep -Eo 'href="gcc-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-gcc.html |
-		sed '/latest/d;s/href=//g;s/"//g;/^gcc-vms/d' |sort -V |tail -n1
+		sed '/latest/d;s/href=//g;s/"//g;' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-gcc.html
 	;;
 ghostscript) # vc_gnu;;
