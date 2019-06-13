@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.15"
+VERCHK_VERSION="0.0.1.16"
 [ -z "$VC_DEBUG" ] && VC_DEBUG=0
 [ -z "$1" ] || MODULE="$1"
 GNU_URL="http://ftpmirror.gnu.org/"
@@ -19,14 +19,9 @@ else
 fi
 
 if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
-	echo "Usage: verchk.sh { help | all | clean | MODULENAME }"
+	echo "Usage: verchk.sh { help | all | clean | list | MODULENAME }"
 	exit 1
-elif [ "$1" = "clean" ]; then
-	rm -v /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
-	rm -v /tmp/verchk-gnu-*.html
-fi
-
-if [ "$1" = "all" -o "$1" = "-a" ]; then
+elif [ "$1" = "all" -o "$1" = "-a" ]; then
 	for m in `grep -o '^[a-z]*.*) ' $0 |sed '/^#/d;s/)//g;/^vc_/d;/grep -o/d'`; do
 		if [ -z "`which lvu`" ]; then
 			echo "$m `$0 $m`"
@@ -36,6 +31,11 @@ if [ "$1" = "all" -o "$1" = "-a" ]; then
 	done
 	[ "$VC_DEBUG" -eq "0" ]	&& $0 clean
 	exit 0
+elif [ "$1" = "clean" ]; then
+	rm -v /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
+	rm -v /tmp/verchk-gnu-*.html
+elif [ "$1" = "list" ]; then
+	grep -oE '^[A-Za-z0-9]+.*\) ' $0 |sed '/^vc_/d;s/)//g'
 fi
 
 vc_gnu() {
