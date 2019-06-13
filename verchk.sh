@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.14"
+VERCHK_VERSION="0.0.1.15"
 [ -z "$VC_DEBUG" ] && VC_DEBUG=0
 [ -z "$1" ] || MODULE="$1"
 GNU_URL="http://ftpmirror.gnu.org/"
@@ -77,35 +77,9 @@ vc_xorg_util() {
 }
 
 case "$MODULE" in
-gcc)
-	[ -f "/tmp/verchk-gnu-gcc.html" ] || $WGET_CMD $GNU_URL/$MODULE -O /tmp/verchk-gnu-gcc.html &&
-	grep -Eo 'href="gcc-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-gcc.html |
-		sed '/latest/d;s/href=//g;s/"//g;' |sort -V |tail -n1
-	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-gcc.html
-	;;
-ghostscript) # vc_gnu;;
-	[ -f "/tmp/verchk-gnu-ghostscript.html" ] || 
-		$WGET_CMD $GNU_URL/ghostscript -O /tmp/verchk-gnu-ghostscript.html &&
-	grep -Eo 'href="ghostscript-[0-9]+\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-ghostscript.html |
-		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
-	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-ghostscript.html
-	;;
-guile) # vc_gnu;;
-	[ -f "/tmp/verchk-gnu-guile.html" ] || 
-		$WGET_CMD $GNU_URL/guile -O /tmp/verchk-gnu-guile.html &&
-	grep -Eo 'href="guile-[0-9]+\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-guile.html |
-		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
-	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-guile.html
-	;;
-xkeyboard-config) # vc_xorg_data;;
-	$WGET_CMD https://www.x.org/releases/individual/data/xkeyboard-config/ \
-			-O /tmp/verchk-xorg-xkeyboard-config.html &&
-	grep -Eo 'href="xkeyboard-config-[0-9]*\..*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-xkeyboard-config.html |
-		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
-	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-xorg-xkeyboard-config.html
-	;;
 a2ps) vc_gnu;;
 acct) vc_gnu;;
+appres) vc_xorg_app;;
 aspell) vc_gnu;;
 autoconf) vc_gnu;;
 autoconf-archive) vc_gnu;;
@@ -113,8 +87,10 @@ autogen) vc_gnu;;
 automake) vc_gnu;;
 bash) vc_gnu;;
 bc) vc_gnu;;
+bdftopcf) vc_xorg_app;;
 binutils) vc_gnu;;
 bison) vc_gnu;;
+bitmap) vc_xorg_app;;
 clisp) vc_gnu;;
 coreutils) vc_gnu;;
 cpio) vc_gnu;;
@@ -122,21 +98,70 @@ ddrescue) vc_gnu;;
 ddd) vc_gnu;;
 diffutils) vc_gnu;;
 ed) vc_gnu;;
+editres) vc_xorg_app;;
 emacs) vc_gnu;;
+encodings) vc_xorg_font;;
 enscript) vc_gnu;;
 #fdisk) vc_gnu;;
 findutils) vc_gnu;;
 flex) vc_gnu;;
+#font-adobe-dpi) vc_xorg_font;;
+#font-adobe-utopia-dpi) vc_xorg_font;;
+#font-adobe-utopia-type) vc_xorg_font;;
+font-alias) vc_xorg_font;;
+font-arabic-misc) vc_xorg_font;;
+#font-bh-dpi) vc_xorg_font;;
+#font-bh-lucidatypewriter-dpi) vc_xorg_font;;
+font-bh-ttf) vc_xorg_font;;
+#font-bh-type) vc_xorg_font;;
+#font-bitstream-dpi) vc_xorg_font;;
+font-bitstream-speedo) vc_xorg_font;;
+#font-bitstream-type) vc_xorg_font;;
+font-cronyx-cyrillic) vc_xorg_font;;
+font-cursor-misc) vc_xorg_font;;
+font-daewoo-misc) vc_xorg_font;;
+font-dec-misc) vc_xorg_font;;
+#font-ibm-type) vc_xorg_font;;
+font-isas-misc) vc_xorg_font;;
+font-jis-misc) vc_xorg_font;;
+font-micro-misc) vc_xorg_font;;
+font-misc-cyrillic) vc_xorg_font;;
+font-misc-ethiopic) vc_xorg_font;;
+font-misc-meltho) vc_xorg_font;;
+font-misc-misc) vc_xorg_font;;
+font-mutt-misc) vc_xorg_font;;
+font-schumacher-misc) vc_xorg_font;;
+font-screen-cyrillic) vc_xorg_font;;
+font-sony-misc) vc_xorg_font;;
+font-sun-misc) vc_xorg_font;;
+font-util) vc_xorg_font;;
+font-winitzki-cyrillic) vc_xorg_font;;
+#font-xfree-type) vc_xorg_font;;
 #fontutils) vc_gnu;;
 gawk) vc_gnu;;
 gcal) vc_gnu;;
+gcc)
+	[ -f "/tmp/verchk-gnu-gcc.html" ] || $WGET_CMD $GNU_URL/$MODULE -O /tmp/verchk-gnu-gcc.html &&
+	grep -Eo 'href="gcc-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-gcc.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-gcc.html
+	;;
+gccmakedep) vc_xorg_util;;
 gcl) vc_gnu;;
 gdb) vc_gnu;;
 gdbm) vc_gnu;;
 gengetopt) vc_gnu;;
 gettext) vc_gnu;;
 gforth) vc_gnu;;
+ghostscript) # vc_gnu;;
+	[ -f "/tmp/verchk-gnu-ghostscript.html" ] || 
+		$WGET_CMD $GNU_URL/ghostscript -O /tmp/verchk-gnu-ghostscript.html &&
+	grep -Eo 'href="ghostscript-[0-9]+\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-ghostscript.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-ghostscript.html
+	;;
 #git) vc_gnu;;
+#glamor-egl) vc_xorg_driver;;
 glibc) vc_gnu;;
 gmp) vc_gnu;;
 gnutls) vc_gnu;;
@@ -145,8 +170,18 @@ grep) vc_gnu;;
 groff) vc_gnu;;
 grub) vc_gnu;;
 gsl) vc_gnu;;
+guile) # vc_gnu;;
+	[ -f "/tmp/verchk-gnu-guile.html" ] || 
+		$WGET_CMD $GNU_URL/guile -O /tmp/verchk-gnu-guile.html &&
+	grep -Eo 'href="guile-[0-9]+\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-guile.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-guile.html
+	;;
 gzip) vc_gnu;;
+iceauth) vc_xorg_app;;
+ico) vc_xorg_app;;
 idutils) vc_gnu;;
+imake) vc_xorg_util;;
 indent) vc_gnu;;
 inetutils) vc_gnu;;
 less) vc_gnu;;
@@ -162,7 +197,10 @@ m4) vc_gnu;;
 mailman) vc_gnu;;
 mailutils) vc_gnu;;
 make) vc_gnu;;
+makedepend) vc_xorg_util;;
 mc) vc_gnu;;
+mkfontdir) vc_xorg_app;;
+mkfontscale) vc_xorg_app;;
 mpc) vc_gnu;;
 mpfr) vc_gnu;;
 mtools) vc_gnu;;
@@ -173,48 +211,26 @@ patch) vc_gnu;;
 plotutils) vc_gnu;;
 pth) vc_gnu;;
 readline) vc_gnu;;
+rgb) vc_xorg_app;;
 screen) vc_gnu;;
 sed) vc_gnu;;
+setxkbmap) vc_xorg_app;;
+showfont) vc_xorg_app;;
 tar) vc_gnu;;
 texinfo) vc_gnu;;
 time) vc_gnu;;
+twm) vc_xorg_app;;
 unifont) vc_gnu;;
 units) vc_gnu;;
+util-macros) vc_xorg_util;;
+#viewres) vc_xorg_app;;
 wget) vc_gnu;;
 which) vc_gnu;;
-xboard) vc_gnu;;
-zile) vc_gnu;;
-rgb) vc_xorg_app;;
-twm) vc_xorg_app;;
-#viewres) vc_xorg_app;;
-appres) vc_xorg_app;;
-bdftopcf) vc_xorg_app;;
-bitmap) vc_xorg_app;;
-editres) vc_xorg_app;;
-iceauth) vc_xorg_app;;
-ico) vc_xorg_app;;
-mkfontdir) vc_xorg_app;;
-mkfontscale) vc_xorg_app;;
-setxkbmap) vc_xorg_app;;
-showfont) vc_xorg_app;;
 xauth) vc_xorg_app;;
-xev) vc_xorg_app;;
-xinit) vc_xorg_app;;
-xinput) vc_xorg_app;;
-xkbcomp) vc_xorg_app;;
-xkill) vc_xorg_app;;
-xmessage) vc_xorg_app;;
-xmodmap) vc_xorg_app;;
-xrandr) vc_xorg_app;;
-xrdb) vc_xorg_app;;
-xset) vc_xorg_app;;
-xsetroot) vc_xorg_app;;
-xcursor-themes) vc_xorg_data;;
 xbitmaps) vc_xorg_data;;
-#xkbdata) vc_xorg_data;;
-xorg-docs) vc_xorg_doc;;
-xorg-sgml-doctools) vc_xorg_doc;;
-#glamor-egl) vc_xorg_driver;;
+xboard) vc_gnu;;
+xcursor-themes) vc_xorg_data;;
+xev) vc_xorg_app;;
 xf86-input-acecad) vc_xorg_driver;;
 xf86-input-aiptek) vc_xorg_driver;;
 xf86-input-calcomp) vc_xorg_driver;;
@@ -308,42 +324,26 @@ xf86-video-voodoo) vc_xorg_driver;;
 #xf86-video-wsfb) vc_xorg_driver;;
 #xf86-video-xgi) vc_xorg_driver;;
 #xf86-video-xgixp) vc_xorg_driver;;
-encodings) vc_xorg_font;;
-#font-adobe-dpi) vc_xorg_font;;
-#font-adobe-utopia-dpi) vc_xorg_font;;
-#font-adobe-utopia-type) vc_xorg_font;;
-font-alias) vc_xorg_font;;
-font-arabic-misc) vc_xorg_font;;
-#font-bh-dpi) vc_xorg_font;;
-#font-bh-lucidatypewriter-dpi) vc_xorg_font;;
-font-bh-ttf) vc_xorg_font;;
-#font-bh-type) vc_xorg_font;;
-#font-bitstream-dpi) vc_xorg_font;;
-font-bitstream-speedo) vc_xorg_font;;
-#font-bitstream-type) vc_xorg_font;;
-font-cronyx-cyrillic) vc_xorg_font;;
-font-cursor-misc) vc_xorg_font;;
-font-daewoo-misc) vc_xorg_font;;
-font-dec-misc) vc_xorg_font;;
-#font-ibm-type) vc_xorg_font;;
-font-isas-misc) vc_xorg_font;;
-font-jis-misc) vc_xorg_font;;
-font-micro-misc) vc_xorg_font;;
-font-misc-cyrillic) vc_xorg_font;;
-font-misc-ethiopic) vc_xorg_font;;
-font-misc-meltho) vc_xorg_font;;
-font-misc-misc) vc_xorg_font;;
-font-mutt-misc) vc_xorg_font;;
-font-schumacher-misc) vc_xorg_font;;
-font-screen-cyrillic) vc_xorg_font;;
-font-sony-misc) vc_xorg_font;;
-font-sun-misc) vc_xorg_font;;
-font-util) vc_xorg_font;;
-font-winitzki-cyrillic) vc_xorg_font;;
-#font-xfree-type) vc_xorg_font;;
-gccmakedep) vc_xorg_util;;
-imake) vc_xorg_util;;
-makedepend) vc_xorg_util;;
-util-macros) vc_xorg_util;;
+xinit) vc_xorg_app;;
+xinput) vc_xorg_app;;
+xkbcomp) vc_xorg_app;;
+#xkbdata) vc_xorg_data;;
+xkill) vc_xorg_app;;
+xkeyboard-config)
+	$WGET_CMD https://www.x.org/releases/individual/data/xkeyboard-config/ \
+			-O /tmp/verchk-xorg-xkeyboard-config.html &&
+	grep -Eo 'href="xkeyboard-config-[0-9]*\..*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-xkeyboard-config.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-xorg-xkeyboard-config.html
+	;;
+xmessage) vc_xorg_app;;
+xmodmap) vc_xorg_app;;
 xorg-cf-files) vc_xorg_util;;
+xorg-docs) vc_xorg_doc;;
+xorg-sgml-doctools) vc_xorg_doc;;
+xrandr) vc_xorg_app;;
+xrdb) vc_xorg_app;;
+xset) vc_xorg_app;;
+xsetroot) vc_xorg_app;;
+zile) vc_gnu;;
 esac
