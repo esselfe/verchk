@@ -1,9 +1,10 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.0.1.16"
+VERCHK_VERSION="0.1.18"
 [ -z "$VC_DEBUG" ] && VC_DEBUG=0
 [ -z "$1" ] || MODULE="$1"
-GNU_URL="http://ftpmirror.gnu.org/"
+#GNU_URL="http://ftpmirror.gnu.org/"
+GNU_URL="http://gnu.mirror.iweb.com/"
 #GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
 XORG_DATA_URL="https://www.x.org/releases/individual/data/"
@@ -32,8 +33,8 @@ elif [ "$1" = "all" -o "$1" = "-a" ]; then
 	[ "$VC_DEBUG" -eq "0" ]	&& $0 clean
 	exit 0
 elif [ "$1" = "clean" ]; then
-	rm -v /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
-	rm -v /tmp/verchk-gnu-*.html
+	rm /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
+	rm /tmp/verchk-gnu-*.html 2>/dev/null
 elif [ "$1" = "list" ]; then
 	grep -oE '^[A-Za-z0-9]+.*\) ' $0 |sed '/^vc_/d;s/)//g'
 fi
@@ -91,7 +92,6 @@ bdftopcf) vc_xorg_app;;
 binutils) vc_gnu;;
 bison) vc_gnu;;
 bitmap) vc_xorg_app;;
-clisp) vc_gnu;;
 coreutils) vc_gnu;;
 cpio) vc_gnu;;
 ddrescue) vc_gnu;;
@@ -104,7 +104,6 @@ encodings) vc_xorg_font;;
 enscript) vc_gnu;;
 #fdisk) vc_gnu;;
 findutils) vc_gnu;;
-flex) vc_gnu;;
 #font-adobe-dpi) vc_xorg_font;;
 #font-adobe-utopia-dpi) vc_xorg_font;;
 #font-adobe-utopia-type) vc_xorg_font;;
