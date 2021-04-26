@@ -1,10 +1,10 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.1.19"
+VERCHK_VERSION="0.1.20"
 [ -z "$VC_DEBUG" ] && VC_DEBUG=0
 [ -z "$1" ] || MODULE="$1"
-#GNU_URL="http://ftpmirror.gnu.org/"
-GNU_URL="http://gnu.mirror.iweb.com/"
+GNU_URL="http://ftpmirror.gnu.org/"
+#GNU_URL="http://gnu.mirror.iweb.com/"
 #GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
 XORG_DATA_URL="https://www.x.org/releases/individual/data/"
@@ -13,11 +13,11 @@ XORG_DRIVER_URL="https://www.x.org/releases/individual/driver/"
 XORG_FONT_URL="https://www.x.org/releases/individual/font/"
 XORG_UTIL_URL="https://www.x.org/releases/individual/util/"
 
-if [ -z "$VC_DEBUG" -o $VC_DEBUG -eq 0 ]; then
-	WGET_CMD="wget -q -t 1 -T 24 --no-proxy --no-cache --no-cookies"
-else
-	WGET_CMD="wget -v -t 1 -T 24 --no-proxy --no-cache --no-cookies"
-fi
+#if [ -z "$VC_DEBUG" -o $VC_DEBUG -eq 0 ]; then
+#	WGET_CMD="wget -q -t 1 -T 24 --no-proxy --no-cache --no-cookies"
+#else
+#	WGET_CMD="wget -v -t 1 -T 24 --no-proxy --no-cache --no-cookies"
+#fi
 
 if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
 	echo "Usage: verchk.sh { help | all | clean | list | MODULENAME }"
@@ -27,8 +27,14 @@ elif [ "$1" = "all" -o "$1" = "-a" ]; then
 		if [ -z "`which lvu`" ]; then
 			echo "$m `$0 $m`"
 		else
-			echo "$m `lvu installed $m |sed 's/.* not installed/not-installed/g'` `lvu version $m` `$0 $m`"
+			[ "$m" = "mpc" ] && m="libmpc"
+			[ "$m" = "grub" ] && {
+echo "$m `lvu installed grub2 |sed 's/.* not installed/not-installed/g'` `lvu version grub2` `$0 $m`"
+} || {
+echo "$m `lvu installed $m |sed 's/.* not installed/not-installed/g'` `lvu version $m` `$0 $m`"
+}
 		fi
+		sleep 2
 	done
 	[ "$VC_DEBUG" -eq "0" ]	&& $0 clean
 	exit 0
@@ -40,39 +46,52 @@ elif [ "$1" = "list" ]; then
 fi
 
 vc_gnu() {
-	[ -f "/tmp/verchk-gnu-$MODULE.html" ] || 
-		$WGET_CMD $GNU_URL/$MODULE -O /tmp/verchk-gnu-$MODULE.html &&
+	{ [ -f "/tmp/verchk-gnu-$MODULE.html" ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$GNU_URL/$MODULE -o /tmp/verchk-gnu-$MODULE.html; } &&
 	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-$MODULE.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-$MODULE.html
 }
 vc_xorg_app() {
-	[ -f /tmp/verchk-xorg-app.html ] || $WGET_CMD $XORG_APP_URL -O /tmp/verchk-xorg-app.html &&
+	{ [ -f /tmp/verchk-xorg-app.html ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$XORG_APP_URL -o /tmp/verchk-xorg-app.html; } &&
 	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-app.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_data() {
-	[ -f /tmp/verchk-xorg-data.html ] || $WGET_CMD $XORG_DATA_URL -O /tmp/verchk-xorg-data.html &&
+	{ [ -f /tmp/verchk-xorg-data.html ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$XORG_DATA_URL -o /tmp/verchk-xorg-data.html; } &&
 	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-data.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_doc() {
-	[ -f /tmp/verchk-xorg-doc.html ] || $WGET_CMD $XORG_DOC_URL -O /tmp/verchk-xorg-doc.html &&
+	{ [ -f /tmp/verchk-xorg-doc.html ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$XORG_DOC_URL -o /tmp/verchk-xorg-doc.html; } &&
 	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-doc.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_driver() {
-	[ -f /tmp/verchk-xorg-driver.html ] || $WGET_CMD $XORG_DRIVER_URL -O /tmp/verchk-xorg-driver.html &&
+	{ [ -f /tmp/verchk-xorg-driver.html ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$XORG_DRIVER_URL -o /tmp/verchk-xorg-driver.html; } &&
 	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-driver.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_font() {
-	[ -f /tmp/verchk-xorg-font.html ] || $WGET_CMD $XORG_FONT_URL -O /tmp/verchk-xorg-font.html &&
+	{ [ -f /tmp/verchk-xorg-font.html ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$XORG_FONT_URL -o /tmp/verchk-xorg-font.html; } &&
 	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-font.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_util() {
-	[ -f /tmp/verchk-xorg-util.html ] || $WGET_CMD $XORG_UTIL_URL -O /tmp/verchk-xorg-util.html &&
+	{ [ -f /tmp/verchk-xorg-util.html ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$XORG_UTIL_URL -o /tmp/verchk-xorg-util.html; } &&
 	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-util.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
@@ -140,7 +159,9 @@ font-winitzki-cyrillic) vc_xorg_font;;
 gawk) vc_gnu;;
 gcal) vc_gnu;;
 gcc)
-	[ -f "/tmp/verchk-gnu-gcc.html" ] || $WGET_CMD $GNU_URL/$MODULE -O /tmp/verchk-gnu-gcc.html &&
+	{ [ -f "/tmp/verchk-gnu-gcc.html" ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$GNU_URL/$MODULE -o /tmp/verchk-gnu-gcc.html; } &&
 	grep -Eo 'href="gcc-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-gcc.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-gcc.html
@@ -153,8 +174,9 @@ gengetopt) vc_gnu;;
 gettext) vc_gnu;;
 gforth) vc_gnu;;
 ghostscript) # vc_gnu;;
-	[ -f "/tmp/verchk-gnu-ghostscript.html" ] || 
-		$WGET_CMD $GNU_URL/ghostscript -O /tmp/verchk-gnu-ghostscript.html &&
+	{ [ -f "/tmp/verchk-gnu-ghostscript.html" ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$GNU_URL/ghostscript -o /tmp/verchk-gnu-ghostscript.html; } &&
 	grep -Eo 'href="ghostscript-[0-9]+\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-ghostscript.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-ghostscript.html
@@ -170,8 +192,9 @@ groff) vc_gnu;;
 grub) vc_gnu;;
 gsl) vc_gnu;;
 guile) # vc_gnu;;
-	[ -f "/tmp/verchk-gnu-guile.html" ] || 
-		$WGET_CMD $GNU_URL/guile -O /tmp/verchk-gnu-guile.html &&
+	{ [ -f "/tmp/verchk-gnu-guile.html" ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$GNU_URL/guile -o /tmp/verchk-gnu-guile.html; } &&
 	grep -Eo 'href="guile-[0-9]+\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-guile.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-guile.html
@@ -329,8 +352,9 @@ xkbcomp) vc_xorg_app;;
 #xkbdata) vc_xorg_data;;
 xkill) vc_xorg_app;;
 xkeyboard-config)
-	$WGET_CMD https://www.x.org/releases/individual/data/xkeyboard-config/ \
-			-O /tmp/verchk-xorg-xkeyboard-config.html &&
+	curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+		https://www.x.org/releases/individual/data/xkeyboard-config/ \
+			-o /tmp/verchk-xorg-xkeyboard-config.html &&
 	grep -Eo 'href="xkeyboard-config-[0-9]*\..*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-xkeyboard-config.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-xorg-xkeyboard-config.html
