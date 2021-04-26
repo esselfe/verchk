@@ -3,8 +3,8 @@
 VERCHK_VERSION="0.1.20"
 [ -z "$VC_DEBUG" ] && VC_DEBUG=0
 [ -z "$1" ] || MODULE="$1"
-GNU_URL="http://ftpmirror.gnu.org/"
-#GNU_URL="http://gnu.mirror.iweb.com/"
+#GNU_URL="http://ftpmirror.gnu.org/"
+GNU_URL="http://gnu.mirror.iweb.com/"
 #GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
 XORG_DATA_URL="https://www.x.org/releases/individual/data/"
@@ -48,7 +48,7 @@ fi
 vc_gnu() {
 	{ [ -f "/tmp/verchk-gnu-$MODULE.html" ] || 
 		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
-			$GNU_URL/$MODULE -o /tmp/verchk-gnu-$MODULE.html; } &&
+			$GNU_URL/$MODULE/ -o /tmp/verchk-gnu-$MODULE.html; } &&
 	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-$MODULE.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-$MODULE.html
@@ -161,7 +161,7 @@ gcal) vc_gnu;;
 gcc)
 	{ [ -f "/tmp/verchk-gnu-gcc.html" ] || 
 		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
-			$GNU_URL/$MODULE -o /tmp/verchk-gnu-gcc.html; } &&
+			$GNU_URL/$MODULE/ -o /tmp/verchk-gnu-gcc.html; } &&
 	grep -Eo 'href="gcc-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-gcc.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-gcc.html
@@ -176,7 +176,7 @@ gforth) vc_gnu;;
 ghostscript) # vc_gnu;;
 	{ [ -f "/tmp/verchk-gnu-ghostscript.html" ] || 
 		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
-			$GNU_URL/ghostscript -o /tmp/verchk-gnu-ghostscript.html; } &&
+			$GNU_URL/ghostscript/ -o /tmp/verchk-gnu-ghostscript.html; } &&
 	grep -Eo 'href="ghostscript-[0-9]+\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-ghostscript.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-ghostscript.html
@@ -194,7 +194,7 @@ gsl) vc_gnu;;
 guile) # vc_gnu;;
 	{ [ -f "/tmp/verchk-gnu-guile.html" ] || 
 		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
-			$GNU_URL/guile -o /tmp/verchk-gnu-guile.html; } &&
+			$GNU_URL/guile/ -o /tmp/verchk-gnu-guile.html; } &&
 	grep -Eo 'href="guile-[0-9]+\..*(xz|bz2|gz|lz)"' /tmp/verchk-gnu-guile.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 	[ "$VC_DEBUG" -eq "0" ] && rm /tmp/verchk-gnu-guile.html
