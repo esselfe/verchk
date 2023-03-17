@@ -11,6 +11,7 @@ XORG_DATA_URL="https://www.x.org/releases/individual/data/"
 XORG_DOC_URL="https://www.x.org/releases/individual/doc/"
 XORG_DRIVER_URL="https://www.x.org/releases/individual/driver/"
 XORG_FONT_URL="https://www.x.org/releases/individual/font/"
+XORG_LIB_URL="https://www.x.org/releases/individual/lib/"
 XORG_UTIL_URL="https://www.x.org/releases/individual/util/"
 
 #if [ -z "$VC_DEBUG" -o $VC_DEBUG -eq 0 ]; then
@@ -39,7 +40,7 @@ echo "$m `lvu installed $m |sed 's/.* not installed/not-installed/g'` `lvu versi
 	[ "$VC_DEBUG" -eq "0" ]	&& $0 clean
 	exit 0
 elif [ "$1" = "clean" ]; then
-	rm /tmp/verchk-xorg-{app,data,doc,driver,font,util}.html
+	rm /tmp/verchk-xorg-{app,data,doc,driver,font,lib,util}*.html
 	rm /tmp/verchk-gnu-*.html 2>/dev/null
 elif [ "$1" = "list" ]; then
 	grep -oE '^[A-Za-z0-9]+.*\) ' $0 |sed '/^vc_/d;s/)//g'
@@ -86,6 +87,21 @@ vc_xorg_font() {
 		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
 			$XORG_FONT_URL -o /tmp/verchk-xorg-font.html; } &&
 	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-font.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+}
+vc_xorg_lib() {
+	{ [ -f /tmp/verchk-xorg-lib.html ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			$XORG_LIB_URL -o /tmp/verchk-xorg-lib.html; } &&
+	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-lib.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+}
+vc_xorg_lib_fd() {
+	{ [ -f /tmp/verchk-xorg-lib-$MODULE.html ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			https://freedesktop.org/software/$MODULE/ \
+			-o /tmp/verchk-xorg-lib-$MODULE.html; } &&
+	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-lib-$MODULE.html |
 		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
 }
 vc_xorg_util() {
@@ -208,13 +224,62 @@ indent) vc_gnu;;
 inetutils) vc_gnu;;
 less) vc_gnu;;
 libcdio) vc_gnu;;
+libdmx) vc_xorg_lib;;
+libdrm)
+	{ [ -f /tmp/verchk-xorg-lib-libdrm.html ] || 
+		curl -s --user-agent "verchk $VERCHK_VERSION (https://github.com/esselfe/verchk)" \
+			https://dri.freedesktop.org/libdrm/ \
+			-o /tmp/verchk-xorg-lib-libdrm.html; } &&
+	grep -Eo 'href="'$MODULE'-[0-9]+.*(xz|bz2|gz|lz)"' /tmp/verchk-xorg-lib-libdrm.html |
+		sed '/latest/d;s/href=//g;s/"//g' |sort -V |tail -n1
+	;;
+libevdev) vc_xorg_lib_fd;;
+libfontenc) vc_xorg_lib;;
+libFS) vc_xorg_lib;;
+libICE) vc_xorg_lib;;
 libidn) vc_gnu;;
+libinput) vc_xorg_lib_fd;;
+liblbxutil) vc_xorg_lib;;
 libmicrohttpd) vc_gnu;;
+liboldX) vc_xorg_lib;;
+libpciaccess) vc_xorg_lib;;
 libsigsegv) vc_gnu;;
+libSM) vc_xorg_lib;;
 libtasn1) vc_gnu;;
 libtool) vc_gnu;;
 libunistring) vc_gnu;;
+libX11) vc_xorg_lib;;
+libXau) vc_xorg_lib;;
+libXaw) vc_xorg_lib;;
+libXcomposite) vc_xorg_lib;;
+libXcursor) vc_xorg_lib;;
+libXdamage) vc_xorg_lib;;
+libXdmcp) vc_xorg_lib;;
+libXext) vc_xorg_lib;;
+libXfixes) vc_xorg_lib;;
+libXfont) vc_xorg_lib;;
+libXft) vc_xorg_lib;;
+libXi) vc_xorg_lib;;
+libXinerama) vc_xorg_lib;;
+libxkbfile) vc_xorg_lib;;
+libxkbui) vc_xorg_lib;;
 libxmi) vc_gnu;;
+libXmu) vc_xorg_lib;;
+libXp) vc_xorg_lib;;
+libXpm) vc_xorg_lib;;
+libXrandr) vc_xorg_lib;;
+libXrender) vc_xorg_lib;;
+libXres) vc_xorg_lib;;
+libXScrnSaver) vc_xorg_lib;;
+libxshmfence) vc_xorg_lib;;
+libXt) vc_xorg_lib;;
+libXTrap) vc_xorg_lib;;
+libXtst) vc_xorg_lib;;
+libXv) vc_xorg_lib;;
+libXvMC) vc_xorg_lib;;
+libXxf86dga) vc_xorg_lib;;
+libXxf86misc) vc_xorg_lib;;
+libXxf86vm) vc_xorg_lib;;
 m4) vc_gnu;;
 mailman) vc_gnu;;
 mailutils) vc_gnu;;
@@ -230,6 +295,7 @@ nano) vc_gnu;;
 nettle) vc_gnu;;
 parted) vc_gnu;;
 patch) vc_gnu;;
+pixman) vc_xorg_lib;;
 plotutils) vc_gnu;;
 pth) vc_gnu;;
 readline) vc_gnu;;
@@ -368,5 +434,6 @@ xrandr) vc_xorg_app;;
 xrdb) vc_xorg_app;;
 xset) vc_xorg_app;;
 xsetroot) vc_xorg_app;;
+xtrans) vc_xorg_lib;;
 zile) vc_gnu;;
 esac
