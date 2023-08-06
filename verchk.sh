@@ -1,11 +1,10 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.1.20"
+VERCHK_VERSION="0.1.21"
 [ -z "$VC_DEBUG" ] && VC_DEBUG=0
 [ -z "$1" ] || MODULE="$1"
 #GNU_URL="http://ftpmirror.gnu.org/"
 GNU_URL="http://gnu.mirror.iweb.com/"
-#GNU_URL="http://gnu.mirror.iweb.com/"
 XORG_APP_URL="https://www.x.org/releases/individual/app/"
 XORG_DATA_URL="https://www.x.org/releases/individual/data/"
 XORG_DOC_URL="https://www.x.org/releases/individual/doc/"
@@ -25,8 +24,11 @@ if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
 	exit 1
 elif [ "$1" = "all" -o "$1" = "-a" ]; then
 	for m in `grep -o '^[a-z]*.*) ' $0 |sed '/^#/d;s/)//g;/^vc_/d;/grep -o/d'`; do
-		if [ -z "`which lvu`" ]; then
+		if [ ! -z "$(which lvu 2>/dev/null)" ]; then
 			echo "$m `$0 $m`"
+		elif [ ! -z "$(which gaze 2>/dev/null)" ]; then
+			m2=$(echo "$m" | tr '[:upper:]' '[:lower:]')
+			echo "$m2 `gaze version $m2 | grep $m2 | awk '{ print $4,$5 }'` `$0 $m`"
 		else
 			[ "$m" = "mpc" ] && m="libmpc"
 			[ "$m" = "grub" ] && {
