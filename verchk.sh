@@ -24,18 +24,20 @@ if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
 	exit 1
 elif [ "$1" = "all" -o "$1" = "-a" ]; then
 	for m in `grep -o '^[a-z]*.*) ' $0 |sed '/^#/d;s/)//g;/^vc_/d;/grep -o/d'`; do
+		# Process line if on Lunar
 		if [ ! -z "$(which lvu 2>/dev/null)" ]; then
-			echo "$m `$0 $m`"
-		elif [ ! -z "$(which gaze 2>/dev/null)" ]; then
-			m2=$(echo "$m" | tr '[:upper:]' '[:lower:]')
-			echo "$m2 `gaze version $m2 | grep $m2 | awk '{ print $4,$5 }'` `$0 $m`"
-		else
 			[ "$m" = "mpc" ] && m="libmpc"
 			[ "$m" = "grub" ] && {
 echo "$m `lvu installed grub2 |sed 's/.* not installed/not-installed/g'` `lvu version grub2` `$0 $m`"
 } || {
 echo "$m `lvu installed $m |sed 's/.* not installed/not-installed/g'` `lvu version $m` `$0 $m`"
 }
+		# Process line if on Sourcemage
+		elif [ ! -z "$(which gaze 2>/dev/null)" ]; then
+			m2=$(echo "$m" | tr '[:upper:]' '[:lower:]')
+			echo "$m2 `gaze version $m2 | grep $m2 | awk '{ print $4,$5 }'` `$0 $m`"
+		else
+			echo "$m `$0 $m`"
 		fi
 		sleep 2
 	done
