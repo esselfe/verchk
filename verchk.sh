@@ -35,6 +35,8 @@ echo "$m `lvu installed $m |sed 's/.* not installed/not-installed/g'` `lvu versi
 		# Process line if on Sourcemage
 		elif [ ! -z "$(which gaze 2>/dev/null)" ]; then
 			m2=$(echo "$m" | tr '[:upper:]' '[:lower:]')
+			[ "$m2" = "mpc" ] && m2="libmpc"
+			[ "$m2" = "grub" ] && m2="grub2"
 			echo "$m2 `gaze version $m2 | grep $m2 | awk '{ print $4,$5 }'` `$0 $m`"
 		else
 			echo "$m `$0 $m`"
