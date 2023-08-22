@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.1.21"
+VERCHK_VERSION="0.2.0"
 [ -z "$VC_DEBUG" ] && VC_DEBUG=0
 [ -z "$1" ] || MODULE="$1"
 #GNU_URL="http://ftpmirror.gnu.org/"
@@ -20,27 +20,16 @@ XORG_UTIL_URL="https://www.x.org/releases/individual/util/"
 #fi
 
 if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
-	echo "Usage: verchk.sh { help | all | clean | list | MODULENAME }"
+	echo "Usage: $(basename $0) { help | all | clean | list | MODULENAME }"
 	exit 1
 elif [ "$1" = "all" -o "$1" = "-a" ]; then
 	for m in `grep -o '^[a-z]*.*) ' $0 |sed '/^#/d;s/)//g;/^vc_/d;/grep -o/d'`; do
-		# Process line if on Lunar
-		if [ ! -z "$(which lvu 2>/dev/null)" ]; then
-			[ "$m" = "mpc" ] && m="libmpc"
-			[ "$m" = "grub" ] && {
+		[ "$m" = "mpc" ] && m="libmpc"
+		[ "$m" = "grub" ] && {
 echo "$m `lvu installed grub2 |sed 's/.* not installed/not-installed/g'` `lvu version grub2` `$0 $m`"
 } || {
 echo "$m `lvu installed $m |sed 's/.* not installed/not-installed/g'` `lvu version $m` `$0 $m`"
 }
-		# Process line if on Sourcemage
-		elif [ ! -z "$(which gaze 2>/dev/null)" ]; then
-			m2=$(echo "$m" | tr '[:upper:]' '[:lower:]')
-			[ "$m2" = "mpc" ] && m2="libmpc"
-			[ "$m2" = "grub" ] && m2="grub2"
-			echo "$m2 `gaze version $m2 | grep $m2 | awk '{ print $4,$5 }'` `$0 $m`"
-		else
-			echo "$m `$0 $m`"
-		fi
 		sleep 2
 	done
 	[ "$VC_DEBUG" -eq "0" ]	&& $0 clean
