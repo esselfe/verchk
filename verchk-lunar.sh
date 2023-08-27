@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERCHK_VERSION="0.2.0"
+VERCHK_VERSION="0.2.1"
 [ -z "$VC_DEBUG" ] && VC_DEBUG=0
 [ -z "$1" ] || MODULE="$1"
 #GNU_URL="http://ftpmirror.gnu.org/"
