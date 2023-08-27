@@ -23,12 +23,13 @@ if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" -o "$1" = "help" ]; then
 	echo "Usage: $(basename $0) { help | all | clean | list | MODULENAME }"
 	exit 1
 elif [ "$1" = "all" -o "$1" = "-a" ]; then
-	for m in `grep -o '^[a-z]*.*) ' $0 |sed '/^#/d;s/)//g;/^vc_/d;/grep -o/d'`; do
+	for m in `grep -o '^[a-z]*.*) ' $0 |sed '/^#/d;s/)//g;/^vc_/d;/grep -o/d;/echo/d'`; do
+		echo "###m:$m###"
 		[ "$m" = "mpc" ] && m="libmpc"
 		[ "$m" = "grub" ] && {
-echo "$m `lvu installed grub2 |sed 's/.* not installed/not-installed/g'` `lvu version grub2` `$0 $m`"
+echo "$m $(lvu installed grub2 |sed 's/.* not installed/not-installed/g') $(lvu version grub2) $($0 $m)"
 } || {
-echo "$m `lvu installed $m |sed 's/.* not installed/not-installed/g'` `lvu version $m` `$0 $m`"
+echo "$m $(lvu installed $m |sed 's/.* not installed/not-installed/g') $(lvu version $m) $($0 $m)"
 }
 		sleep 2
 	done
